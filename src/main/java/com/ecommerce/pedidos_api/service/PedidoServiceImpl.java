@@ -133,4 +133,23 @@ public class PedidoServiceImpl implements PedidoService {
             throw new IllegalArgumentException("Não é possível alterar o status de um pedido que já foi " + statusAtual + ".");
         }
     }
+
+    @Override
+    @Transactional
+    public void cancelarPedido(Long id) {
+        // 1. Busca o pedido pelo ID. Se não encontrar, lança exceção PedidoNaoEncontradoException (404)
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new PedidoNaoEncontradoException("Pedido com ID " + id + " não encontrado."));
+
+        // 2. Verifica se o pedido pode ainda pode ser cancelado (regra de negócio)
+        if (pedido.getStatus() == StatusPedido.ENVIADO || pedido.getStatus() == StatusPedido.ENTREGUE) {
+            throw new IllegalArgumentException("Não é possível cancelar um pedido que já foi " + pedido.getStatus() + ".");
+        }
+
+        // 3. Altera o status do pedido para CANCELADO
+        pedido.setStatus(StatusPedido.CANCELADO);
+
+        // 4. Salva o pedido atualizado no banco de dados
+        pedidoRepository.save(pedido);
+    }
 }

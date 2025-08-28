@@ -13,4 +13,6 @@ public interface PedidoService {
     PedidoResponseDTO buscarPorId(Long id);
 
     PedidoResponseDTO atualizarStatusPedido(Long id, AtualizacaoStatusDTO atualizacaoStatusDTO);
+
+    void cancelarPedido(Long id);
 }
