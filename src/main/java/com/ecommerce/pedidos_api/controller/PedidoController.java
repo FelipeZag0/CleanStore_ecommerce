@@ -1,5 +1,6 @@
 package com.ecommerce.pedidos_api.controller;
 
+import com.ecommerce.pedidos_api.dto.AtualizacaoStatusDTO;
 import com.ecommerce.pedidos_api.dto.PedidoRequestDTO;
 import com.ecommerce.pedidos_api.dto.PedidoResponseDTO;
 import com.ecommerce.pedidos_api.service.PedidoService;
@@ -33,5 +34,11 @@ public class PedidoController {
     @GetMapping("/{id}")
     public PedidoResponseDTO obterPedidoPorId(@PathVariable Long id) {
         return pedidoService.buscarPorId(id);
+    }
+
+    // Atualiza o status de um pedido específico
+    @PutMapping("/{id}/status")
+    public PedidoResponseDTO atualizarStatusPedido(@PathVariable Long id, @RequestBody AtualizacaoStatusDTO atualizacaoStatusDTO) {
+        return pedidoService.atualizarStatusPedido(id, atualizacaoStatusDTO);
     }
 }
