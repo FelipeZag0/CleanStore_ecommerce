@@ -41,4 +41,11 @@ public class PedidoController {
     public PedidoResponseDTO atualizarStatusPedido(@PathVariable Long id, @RequestBody AtualizacaoStatusDTO atualizacaoStatusDTO) {
         return pedidoService.atualizarStatusPedido(id, atualizacaoStatusDTO);
     }
+
+    // Cancela um pedido específico (exclusão lógica)
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelarPedido(@PathVariable Long id) {
+        pedidoService.cancelarPedido(id);
+    }
 }
