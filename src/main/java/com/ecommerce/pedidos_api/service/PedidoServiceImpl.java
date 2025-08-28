@@ -1,5 +1,6 @@
 package com.ecommerce.pedidos_api.service;
 
+import com.ecommerce.pedidos_api.dto.AtualizacaoStatusDTO;
 import com.ecommerce.pedidos_api.dto.PedidoRequestDTO;
 import com.ecommerce.pedidos_api.dto.PedidoResponseDTO;
 import com.ecommerce.pedidos_api.exception.PedidoNaoEncontradoException;
@@ -99,5 +100,37 @@ public class PedidoServiceImpl implements PedidoService {
         responseDTO.setStatus(pedido.getStatus().name());
         responseDTO.setEnderecoEntrega(pedido.getEnderecoEntrega());
         return responseDTO;
+    }
+
+    @Override
+    @Transactional
+    public PedidoResponseDTO atualizarStatusPedido(Long id, AtualizacaoStatusDTO atualizacaoStatusDTO) {
+        // 1. Busca o pedido pelo ID. Se não encontrar, lança PedidoNaoEncontradoException (404)
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new PedidoNaoEncontradoException("Pedido com ID " + id + " não encontrado."));
+
+        StatusPedido novoStatus = atualizacaoStatusDTO.getNovoStatus();
+
+        // 2. Valida se a transição de status é permitida (regra de negócio)
+        validarTransicaoStatus(pedido.getStatus(), novoStatus);
+
+        // 3. Atualiza o status do pedido
+        pedido.setStatus(novoStatus);
+
+        // 4. Salva a alteração no banco de dados
+        Pedido pedidoAtualizado = pedidoRepository.save(pedido);
+
+        // 5. Retorno o DTO com os dados atualizados
+        return mapToPedidoResponseDTO(pedidoAtualizado);
+    }
+
+    /**
+     * Metodo auxiliar para validar a transição de status do pedido
+     */
+    private void validarTransicaoStatus(StatusPedido statusAtual, StatusPedido novoStatus){
+        // Exemplo de regra de negócio: não se pode alterar um pedido que já foi cancelado ou entregue
+        if (statusAtual == StatusPedido.CANCELADO || statusAtual == StatusPedido.ENTREGUE) {
+            throw new IllegalArgumentException("Não é possível alterar o status de um pedido que já foi " + statusAtual + ".");
+        }
     }
 }
