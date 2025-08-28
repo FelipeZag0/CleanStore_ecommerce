@@ -6,11 +6,12 @@ import com.ecommerce.pedidos_api.model.ItemPedido;
 import com.ecommerce.pedidos_api.model.Pedido;
 import com.ecommerce.pedidos_api.model.enums.StatusPedido;
 import com.ecommerce.pedidos_api.repository.PedidoRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,40 +19,42 @@ import java.util.stream.Collectors;
 public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepository pedidoRepository;
+
     @Override
     @Transactional
-    public PedidoResponseDTO criarPedido(PedidoRequestDTO pedidoRequestDTO) {
-        // 1. Mapear o DTO para entidade Pedido
+    public PedidoResponseDTO criarPedido(PedidoRequestDTO requestDTO) {
+        // 1. Mapear o DTO para a entidade Pedido
         Pedido novoPedido = new Pedido();
         novoPedido.setClienteId(requestDTO.getClienteId());
         novoPedido.setEnderecoEntrega(requestDTO.getEnderecoEntrega());
-        novoPedido.setItensPedido(requestDTO.getItensPedido());
+        novoPedido.setDataPedido(LocalDateTime.now());
 
-        // 2. Definir o status inicial como "AGUARDANDO_PAGAMENTO"
+        // 2. Definir o status inicial como "AGUARDANDO_PAGAMENTO" [cite: 52]
         novoPedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
 
-        // 3. Mapear os itens, calcular o valor total e associar o pedido
+        // 3. Mapear os itens, calcular o valor total e associar ao pedido
         BigDecimal valorTotalCalculado = new BigDecimal("0.0");
 
         if (requestDTO.getItens() != null && !requestDTO.getItens().isEmpty()) {
             novoPedido.setItens(requestDTO.getItens().stream().map(itemDTO -> {
                 ItemPedido itemPedido = new ItemPedido();
-                ItemPedido.setProdutoId(itemDTO.getProdutoId());
-                ItemPedido.setDescricaoProduto(itemDTO.getDescricaoProduto());
-                ItemPedido.setQunatidade(itemDTO.getQuantidade());
-                ItemPedido.setPrecoUnitario(itemDTO.getPrecoUnitario());
+                itemPedido.setProdutoId(itemDTO.getProdutoId());
+                itemPedido.setDescricaoProduto(itemDTO.getDescricaoProduto());
+                itemPedido.setQuantidade(itemDTO.getQuantidade());
+                itemPedido.setPrecoUnitario(itemDTO.getPrecoUnitario());
 
                 // Associar o item ao pedido (essencial para o relacionamento)
                 itemPedido.setPedido(novoPedido);
 
-                // Acumular o valor total do pedido
+                // Acumular o valor total [cite: 52]
                 BigDecimal subtotalItem = itemDTO.getPrecoUnitario().multiply(BigDecimal.valueOf(itemDTO.getQuantidade()));
                 // Usamos uma variável externa ao lambda para somar
+                // (Note: há formas mais funcionais, mas esta é clara)
                 return itemPedido;
             }).collect(Collectors.toList()));
 
             // Recalcula o valor total a partir da lista de itens já associada
-            for(ItemPedido item : novoPedido.getItens()) {
+            for(ItemPedido item : novoPedido.getItens()){
                 BigDecimal subtotal = item.getPrecoUnitario().multiply(new BigDecimal(item.getQuantidade()));
                 valorTotalCalculado = valorTotalCalculado.add(subtotal);
             }
@@ -59,17 +62,17 @@ public class PedidoServiceImpl implements PedidoService {
 
         novoPedido.setValorTotal(valorTotalCalculado);
 
-        // 4. Salvar o pedido e seus itens no banco de dados
+        // 4. Salvar o pedido e seus itens no banco de dados [cite: 19]
         Pedido pedidoSalvo = pedidoRepository.save(novoPedido);
 
-        // 5. Mapear a entidade salva para o DTO da resposta
+        // 5. Mapear a entidade salva para o DTO de resposta
         return mapToPedidoResponseDTO(pedidoSalvo);
     }
 
     private PedidoResponseDTO mapToPedidoResponseDTO(Pedido pedido) {
         PedidoResponseDTO responseDTO = new PedidoResponseDTO();
         responseDTO.setId(pedido.getId());
-        responseDTO.setDataCriacao(pedido.getDataCriacao());
+        responseDTO.setDataPedido(pedido.getDataPedido());
         responseDTO.setClienteId(pedido.getClienteId());
         responseDTO.setValorTotal(pedido.getValorTotal());
         responseDTO.setStatus(pedido.getStatus().name());
