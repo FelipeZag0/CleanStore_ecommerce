@@ -2,6 +2,7 @@ package com.ecommerce.pedidos_api.service;
 
 import com.ecommerce.pedidos_api.dto.PedidoRequestDTO;
 import com.ecommerce.pedidos_api.dto.PedidoResponseDTO;
+import com.ecommerce.pedidos_api.exception.PedidoNaoEncontradoException;
 import com.ecommerce.pedidos_api.model.ItemPedido;
 import com.ecommerce.pedidos_api.model.Pedido;
 import com.ecommerce.pedidos_api.model.enums.StatusPedido;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,6 +69,25 @@ public class PedidoServiceImpl implements PedidoService {
 
         // 5. Mapear a entidade salva para o DTO de resposta
         return mapToPedidoResponseDTO(pedidoSalvo);
+    }
+
+    @Override
+    public List<PedidoResponseDTO> listarTodos() {
+        // Busca todos os pedidos do repositório
+        return pedidoRepository.findAll()
+                .stream()
+                // Mapeia cada entidade Pedido para um PedidoResponseDTO
+                .map(this::mapToPedidoResponseDTO)
+                // Coleta os resultados em uma lista
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PedidoResponseDTO buscarPorId(Long id) {
+        // Busca o pedido por ID ou lança a exceção customizada se não encontrar
+        return pedidoRepository.findById(id)
+                .map(this::mapToPedidoResponseDTO)
+                .orElseThrow(() -> new PedidoNaoEncontradoException("Pedido com ID " + id + " não encontrado."));
     }
 
     private PedidoResponseDTO mapToPedidoResponseDTO(Pedido pedido) {
