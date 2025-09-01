@@ -124,6 +124,15 @@ API disponível em:
 
 ---
 
+### 🧩 **Teste no Postman**
+
+A coleção **`Ecommerce_Pedidos_API.postman_collection.json`** está disponível para importação no **Postman**, permitindo testar todos os endpoints rapidamente:
+
+* **Importar no Postman:** `File → Import → selecione Ecommerce_Pedidos_API.postman_collection.json`
+* Todos os endpoints, requisições e exemplos de resposta já configurados.
+
+---
+
 ## 📁 **Estrutura de Pastas**
 
 ```
