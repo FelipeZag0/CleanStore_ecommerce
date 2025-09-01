@@ -81,7 +81,7 @@ Desenvolvido como resposta a um desafio técnico para **Desenvolvedor Backend Ja
 ### Passos
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/FelipeZag0/desafio-CRUD_ecommerce.git
 cd pedidos-api
 ```
 
