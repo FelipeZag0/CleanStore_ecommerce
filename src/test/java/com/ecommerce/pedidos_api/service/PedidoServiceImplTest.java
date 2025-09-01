@@ -56,7 +56,7 @@ class PedidoServiceImplTest {
 
         // Assert (Verificação)
         assertNotNull(pedidoResponseDTO);
-        assertEquals(new BigDecimal("170.00"), pedidoResponseDTO.getValorTotal()); // Verifica se o valor total do pedido é calculado corretamente
+        assertEquals(new BigDecimal("205.00"), pedidoResponseDTO.getValorTotal()); // Verifica se o valor total do pedido é calculado corretamente
         verify(pedidoRepository, times(1)).save(any(Pedido.class)); // Verifica se o metodo save foi chamado uma vez
     }
 

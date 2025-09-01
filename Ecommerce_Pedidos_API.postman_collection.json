@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "E-commerce Pedidos API",
+    "description": "Coleção para testar a API de gerenciamento de pedidos de e-commerce",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Criar Pedido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"clienteId\": 1,\n  \"enderecoEntrega\": \"Rua das Flores, 123\",\n  \"itens\": [\n    {\n      \"produtoId\": 10,\n      \"descricaoProduto\": \"Smartphone XYZ\",\n      \"quantidade\": 2,\n      \"precoUnitario\": 999.99\n    },\n    {\n      \"produtoId\": 20,\n      \"descricaoProduto\": \"Case Premium\",\n      \"quantidade\": 1,\n      \"precoUnitario\": 49.90\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pedidos",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Todos Pedidos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pedidos",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar Pedido por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pedidos/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Atualizar Status do Pedido",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"novoStatus\": \"PAGO\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pedidos/1/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "1", "status"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancelar Pedido",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pedidos/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["pedidos", "1"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

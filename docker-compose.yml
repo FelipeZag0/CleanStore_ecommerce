@@ -1,0 +1,45 @@
+# docker-compose.yml
+
+# Define a versão do Docker Compose que estamos usando.
+# A versão '3.8' é moderna e compatível com a maioria das funcionalidades.
+version: '3.8'
+
+# 'services' é a seção onde definimos os contêineres que farão parte da nossa aplicação.
+services:
+  # 'postgres-db' é o nome que damos ao nosso serviço de banco de dados.
+  # Você pode escolher qualquer nome aqui.
+  postgres-db:
+    # Especifica a imagem Docker que será usada para criar o contêiner.
+    # 'postgres:15-alpine' é uma imagem oficial, leve e recente do PostgreSQL.
+    image: postgres:15-alpine
+
+    # 'environment' permite definir variáveis de ambiente dentro do contêiner.
+    # Elas são usadas para configurar o serviço do PostgreSQL na primeira inicialização.
+    environment:
+      # POSTGRES_DB: Define o nome do banco de dados que será criado.
+      # Deve ser o mesmo que está no seu arquivo 'application.properties'.
+      POSTGRES_DB: ecommerce_db
+
+      # POSTGRES_USER: Define o nome de usuário para acessar o banco.
+      POSTGRES_USER: postgres
+
+      # POSTGRES_PASSWORD: Define a senha para o usuário.
+      # Use a mesma senha que você configurou no seu arquivo .env ou application.properties.
+      POSTGRES_PASSWORD: sua_senha
+
+    # 'ports' mapeia as portas entre a sua máquina (host) e o contêiner.
+    # "5432:5432" significa que a porta 5432 da sua máquina será redirecionada
+    # para a porta 5432 dentro do contêiner, permitindo que sua aplicação se conecte.
+    ports:
+      - "5432:5432"
+
+    # 'volumes' permite persistir os dados do banco de dados.
+    # Sem isso, todos os dados seriam perdidos sempre que o contêiner fosse reiniciado.
+    # 'postgres-data:/var/lib/postgresql/data' cria um volume chamado 'postgres-data'
+    # e o associa à pasta de dados padrão do PostgreSQL dentro do contêiner.
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+# Seção para declarar os volumes que serão gerenciados pelo Docker.
+volumes:
+  postgres-data:

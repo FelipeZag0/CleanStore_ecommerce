@@ -128,8 +128,8 @@ public class PedidoServiceImpl implements PedidoService {
      * Metodo auxiliar para validar a transição de status do pedido
      */
     private void validarTransicaoStatus(StatusPedido statusAtual, StatusPedido novoStatus){
-        // Exemplo de regra de negócio: não se pode alterar um pedido que já foi cancelado ou entregue
-        if (statusAtual == StatusPedido.CANCELADO || statusAtual == StatusPedido.ENTREGUE) {
+        // Regra de negócio: não se pode alterar um pedido que já foi enviado, entregue ou cancelado.
+        if (statusAtual == StatusPedido.ENVIADO || statusAtual == StatusPedido.CANCELADO || statusAtual == StatusPedido.ENTREGUE) {
             throw new IllegalArgumentException("Não é possível alterar o status de um pedido que já foi " + statusAtual + ".");
         }
     }

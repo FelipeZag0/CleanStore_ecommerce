@@ -12,7 +12,13 @@ target/
 .settings
 .springBeans
 .sts4-cache
+
+# Arquivos de ambiente
 .env
+*.env
+
+# Arquivos de configuração local
+application-local.properties
 
 ### IntelliJ IDEA ###
 .idea
