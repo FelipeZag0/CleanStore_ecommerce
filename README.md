@@ -82,7 +82,7 @@ Desenvolvido como resposta a um desafio técnico para **Desenvolvedor Backend Ja
 
 ```bash
 git clone https://github.com/FelipeZag0/desafio-CRUD_ecommerce.git
-cd pedidos-api
+cd desafio-CRUD_ecommerce
 ```
 
 ```bash
