@@ -128,8 +128,8 @@ public class PedidoServiceImpl implements PedidoService {
      * Metodo auxiliar para validar a transição de status do pedido
      */
     private void validarTransicaoStatus(StatusPedido statusAtual, StatusPedido novoStatus){
-        // Regra de negócio: não se pode alterar um pedido que já foi enviado, entregue ou cancelado.
-        if (statusAtual == StatusPedido.ENVIADO || statusAtual == StatusPedido.CANCELADO || statusAtual == StatusPedido.ENTREGUE) {
+        // Regra de negócio: não se pode alterar um pedido que já foi entregue ou cancelado.
+        if (statusAtual == StatusPedido.CANCELADO || statusAtual == StatusPedido.ENTREGUE) {
             throw new IllegalArgumentException("Não é possível alterar o status de um pedido que já foi " + statusAtual + ".");
         }
     }
@@ -142,8 +142,8 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new PedidoNaoEncontradoException("Pedido com ID " + id + " não encontrado."));
 
         // 2. Verifica se o pedido pode ainda pode ser cancelado (regra de negócio)
-        if (pedido.getStatus() == StatusPedido.ENVIADO || pedido.getStatus() == StatusPedido.ENTREGUE) {
-            throw new IllegalArgumentException("Não é possível cancelar um pedido que já foi " + pedido.getStatus() + ".");
+        if (pedido.getStatus() == StatusPedido.ENTREGUE) {
+            throw new IllegalArgumentException("Não é possível cancelar um pedido que já foi entregue.");
         }
 
         // 3. Altera o status do pedido para CANCELADO

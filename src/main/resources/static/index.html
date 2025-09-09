@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanStore - Dashboard de Pedidos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2980b9; /* Azul mais moderno */
+            --secondary-color: #f4f7f9; /* Fundo mais suave */
+            --text-color: #2c3e50; /* Cinza escuro suave */
+            --white-color: #ffffff;
+            --border-color: #e1e8ed;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 25px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: var(--white-color);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(44, 62, 80, 0.08);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        h2 {
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        /* --- Botões --- */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease-in-out;
+            color: var(--white-color);
+            font-family: var(--font-family);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px; /* Espaço entre ícone e texto */
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #3498db; }
+
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-danger:hover { background-color: #c0392b; }
+
+        .btn-success { background-color: var(--success-color); }
+        .btn-success:hover { background-color: #27ae60; }
+
+        .btn-secondary { background-color: #7f8c8d; }
+        .btn-secondary:hover { background-color: #95a5a6; }
+
+        /* --- Formulário --- */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            font-family: var(--font-family);
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        #itens-container .item {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: var(--secondary-color);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* --- Tabela --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            font-weight: 500;
+        }
+
+        tbody tr:hover {
+            background-color: #ecf0f1;
+        }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(44, 62, 80, 0.6);
+        }
+
+        .modal-content {
+            background-color: var(--white-color);
+            margin: 8% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slide-down 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slide-down {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-actions {
+            margin-top: 25px;
+            text-align: right;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .modal-actions .btn {
+            margin-left: 10px;
+        }
+
+        #detalhes-pedido p {
+            margin: 8px 0;
+            font-size: 1.1rem;
+        }
+
+        #detalhes-pedido strong {
+            color: var(--primary-color);
+            display: inline-block;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>CleanStore</h1>
+        <h2>Gestão de Pedidos</h2>
+    </div>
+    <button class="btn btn-primary" onclick="abrirModalCriarPedido()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Criar Novo Pedido
+    </button>
+
+    <table id="tabela-pedidos">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Data</th>
+            <th>Valor Total</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<div id="modal-criar-pedido" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="fecharModalCriarPedido()">&times;</span>
+        <h2>Criar Novo Pedido</h2>
+        <form id="form-criar-pedido">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="clienteId">ID do Cliente</label>
+                    <input type="number" id="clienteId" required>
+                </div>
+                <div class="form-group">
+                    <label for="enderecoEntrega">Endereço de Entrega</label>
+                    <input type="text" id="enderecoEntrega" required>
+                </div>
+            </div>
+
+            <h3>Itens do Pedido</h3>
+            <div id="itens-container"></div>
+            <button type="button" class="btn btn-secondary" onclick="adicionarItemForm()">Adicionar Item</button>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-success">Salvar Pedido</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-detalhes" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="fecharModalDetalhes()">&times;</span>
+        <h2>Detalhes do Pedido</h2>
+        <div id="detalhes-pedido"></div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="status-select">Atualizar Status</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="status-select" style="flex-grow: 1;">
+                    <option value="AGUARDANDO_PAGAMENTO">Aguardando Pagamento</option>
+                    <option value="PAGO">Pago</option>
+                    <option value="ENVIADO">Enviado</option>
+                    <option value="ENTREGUE">Entregue</option>
+                    <option value="CANCELADO">Cancelado</option>
+                </select>
+                <button class="btn btn-primary" onclick="atualizarStatusPedido()">Atualizar</button>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-danger" onclick="cancelarPedido()">Cancelar Pedido</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/pedidos';
+
+    const statusMap = {
+        AGUARDANDO_PAGAMENTO: 'Aguardando Pagamento',
+        PAGO: 'Pago',
+        ENVIADO: 'Enviado',
+        ENTREGUE: 'Entregue',
+        CANCELADO: 'Cancelado'
+    };
+
+    // --- Funções da Tabela Principal ---
+    async function carregarPedidos() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Erro ao buscar pedidos.');
+            const pedidos = await response.json();
+
+            const tbody = document.getElementById('tabela-pedidos').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            pedidos.forEach(pedido => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${pedido.id}</td>
+                    <td>${pedido.clienteId}</td>
+                    <td>${new Date(pedido.dataPedido).toLocaleDateString()}</td>
+                    <td>R$ ${pedido.valorTotal.toFixed(2).replace('.', ',')}</td>
+                    <td>${statusMap[pedido.status] || pedido.status}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="abrirModalDetalhes(${pedido.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            Ver
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Não foi possível carregar os pedidos. Verifique se a API está online.');
+        }
+    }
+
+    // --- Funções do Modal de Criação de Pedido ---
+    function abrirModalCriarPedido() {
+        document.getElementById('form-criar-pedido').reset();
+        document.getElementById('itens-container').innerHTML = '';
+        adicionarItemForm();
+        document.getElementById('modal-criar-pedido').style.display = 'block';
+    }
+
+    function fecharModalCriarPedido() {
+        document.getElementById('modal-criar-pedido').style.display = 'none';
+    }
+
+    function adicionarItemForm() {
+        const container = document.getElementById('itens-container');
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('item');
+
+        itemDiv.innerHTML = `
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>ID do Produto</label>
+                    <input type="number" class="produtoId" required placeholder="Ex: 10">
+                </div>
+                 <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" class="descricaoProduto" required placeholder="Ex: Camiseta Branca">
+                </div>
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" class="quantidade" required min="1" placeholder="Ex: 2">
+                </div>
+                <div class="form-group">
+                    <label>Preço Unitário</label>
+                    <input type="number" step="0.01" class="precoUnitario" required placeholder="Ex: 49.90">
+                </div>
+            </div>
+        `;
+        container.appendChild(itemDiv);
+    }
+
+    document.getElementById('form-criar-pedido').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const itens = [];
+        document.querySelectorAll('#itens-container .item').forEach(itemEl => {
+            itens.push({
+                produtoId: parseInt(itemEl.querySelector('.produtoId').value),
+                descricaoProduto: itemEl.querySelector('.descricaoProduto').value,
+                quantidade: parseInt(itemEl.querySelector('.quantidade').value),
+                precoUnitario: parseFloat(itemEl.querySelector('.precoUnitario').value)
+            });
+        });
+
+        const pedidoData = {
+            clienteId: parseInt(document.getElementById('clienteId').value),
+            enderecoEntrega: document.getElementById('enderecoEntrega').value,
+            itens: itens
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pedidoData)
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.mensagem || 'Erro ao criar pedido.');
+            }
+            alert('Pedido criado com sucesso!');
+            fecharModalCriarPedido();
+            carregarPedidos();
+        } catch (error) {
+            console.error(error);
+            alert(`Erro: ${error.message}`);
+        }
+    });
+
+    // --- Funções do Modal de Detalhes/Ações ---
+    let pedidoIdAtual = null;
+
+    async function abrirModalDetalhes(id) {
+        try {
+            const response = await fetch(`${API_URL}/${id}`);
+            if (!response.ok) throw new Error('Pedido não encontrado.');
+            const pedido = await response.json();
+
+            pedidoIdAtual = id;
+            const detalhesDiv = document.getElementById('detalhes-pedido');
+            detalhesDiv.innerHTML = `
+                <p><strong>ID do Pedido:</strong> #${pedido.id}</p>
+                <p><strong>ID do Cliente:</strong> ${pedido.clienteId}</p>
+                <p><strong>Data:</strong> ${new Date(pedido.dataPedido).toLocaleString()}</p>
+                <p><strong>Endereço:</strong> ${pedido.enderecoEntrega}</p>
+                <p><strong>Valor Total:</strong> R$ ${pedido.valorTotal.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Status Atual:</strong> ${statusMap[pedido.status] || pedido.status}</p>
+            `;
+
+            document.getElementById('status-select').value = pedido.status;
+            document.getElementById('modal-detalhes').style.display = 'block';
+
+        } catch(error) {
+            console.error(error);
+            alert(`Erro: ${error.message}`);
+        }
+    }
+
+    function fecharModalDetalhes() {
+        pedidoIdAtual = null;
+        document.getElementById('modal-detalhes').style.display = 'none';
+    }
+
+    async function atualizarStatusPedido() {
+        if (!pedidoIdAtual) return;
+        const novoStatus = document.getElementById('status-select').value;
+        try {
+             const response = await fetch(`${API_URL}/${pedidoIdAtual}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ novoStatus })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.mensagem || 'Erro ao atualizar status.');
+            }
+            alert('Status atualizado com sucesso!');
+            fecharModalDetalhes();
+            carregarPedidos();
+        } catch(error) {
+            console.error(error);
+            alert(`Erro: ${error.message}`);
+        }
+    }
+
+    async function cancelarPedido() {
+         if (!pedidoIdAtual) return;
+         if (!confirm(`Tem certeza que deseja cancelar o pedido #${pedidoIdAtual}?`)) return;
+
+         try {
+            const response = await fetch(`${API_URL}/${pedidoIdAtual}`, { method: 'DELETE' });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.mensagem || 'Não foi possível cancelar o pedido.');
+            }
+            alert('Pedido cancelado com sucesso!');
+            fecharModalDetalhes();
+            carregarPedidos();
+         } catch(error) {
+             console.error(error);
+             alert(`Erro: ${error.message}`);
+         }
+    }
+
+    // --- Inicialização ---
+    window.onclick = function(event) {
+        const criarModal = document.getElementById('modal-criar-pedido');
+        const detalhesModal = document.getElementById('modal-detalhes');
+        if (event.target == criarModal) fecharModalCriarPedido();
+        if (event.target == detalhesModal) fecharModalDetalhes();
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarPedidos);
+</script>
+</body>
+</html>
