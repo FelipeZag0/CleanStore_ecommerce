@@ -81,8 +81,8 @@ Desenvolvido como resposta a um desafio técnico para **Desenvolvedor Backend Ja
 ### Passos
 
 ```bash
-git clone https://github.com/FelipeZag0/desafio-CRUD_ecommerce.git
-cd desafio-CRUD_ecommerce
+git clone https://github.com/FelipeZag0/CleanStore_ecommerce.git
+cd CleanStore_ecommerce
 ```
 
 ```bash
